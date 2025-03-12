@@ -14,7 +14,7 @@
  *  limitations under the License.
  ******************************************************************************* */
 
-import Zemu, {ButtonKind, isTouchDevice, TouchNavigation} from '@zondax/zemu'
+import Zemu, {ButtonKind, isTouchDevice, TouchNavigation, zondaxMainmenuNavigation} from '@zondax/zemu'
 import { KadenaApp, TransferTxType, TransferCrossChainTxParams } from '@zondax/ledger-kadena'
 import { PATH, defaultOptions, models } from './common'
 import { blake2bFinal, blake2bInit, blake2bUpdate } from 'blakejs'
@@ -72,17 +72,7 @@ describe.each(HASH_TEST_CASES)('Hash transactions', function (data) {
       const responseAddr = await app.getAddressAndPubKey(data.path)
       const pubKey = responseAddr.pubkey
 
-      // Enable blind signing mode (this need to be fixed on zemu, as the current fn is not working anymore)
-      if(isTouchDevice(m.name)){
-        const nav = new TouchNavigation(m.name, [
-          ButtonKind.InfoButton,
-          ButtonKind.ToggleSettingButton3,
-          ButtonKind.SettingsQuitButton,
-        ]);
-        await sim.navigate(".", `${m.prefix.toLowerCase()}-sign_${data.name}`, nav.schedule, true, false, 0)
-      } else {
-        await sim.toggleBlindSigning()
-      }
+      await sim.toggleBlindSigning()
 
       // do not wait here... we need to navigate
       const signatureRequest = app.signHash(data.path, data.hash)
@@ -104,6 +94,51 @@ describe.each(HASH_TEST_CASES)('Hash transactions', function (data) {
       const valid = ed25519.verify(signatureResponse.signature, rawHash, pubKey)
 
       expect(valid).toEqual(true)
+    } finally {
+      await sim.close()
+    }
+  })
+})
+
+describe.each(HASH_TEST_CASES)('Hash transactions BLS off', function (data) {
+  test.concurrent.each(models)('clear sign hash', async function (m) {
+    if (!isTouchDevice(m.name)) {
+      return
+    }
+    const sim = new Zemu(m.path)
+    try {
+      await sim.start({ ...defaultOptions, model: m.name })
+      const app = new KadenaApp(sim.getTransport())
+
+      const responseAddr = await app.getAddressAndPubKey(data.path)
+      const pubKey = responseAddr.pubkey
+
+      const req = app.signHash(data.path, data.hash).catch(error => {
+        // Store the error to verify later, we are expecting signHash to fail
+        return error;
+      });
+
+      // Wait until we are not in the main menu
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot())
+
+      // Confirm "Go to settings" and toggle Blind Signing
+      const nav = new TouchNavigation(m.name, [
+        ButtonKind.ConfirmYesButton,
+        ButtonKind.ToggleSettingButton2,
+        ButtonKind.SettingsNavRightButton,
+        ButtonKind.SettingsNavRightButton,
+        ButtonKind.SettingsQuitButton,
+      ]);
+      await sim.navigateAndCompareSnapshots('.', `${m.prefix.toLowerCase()}-clear_sign_${data.name}`, nav.schedule)
+
+      const result = await req;
+      
+      // Verify the error, anything other than 0x6984 is not expected
+      expect(result).toMatchObject({
+        returnCode: 0x6984,
+        message: expect.stringContaining("Data is invalid")
+      });
+
     } finally {
       await sim.close()
     }

@@ -37,6 +37,7 @@ items_error_t items_cautionToDisplayString(__Z_UNUSED item_t item, char *outVal,
 items_error_t items_txTooLargeToDisplayString(__Z_UNUSED item_t item, char *outVal, uint16_t outValLen);
 items_error_t items_signingToDisplayString(item_t item, char *outVal, uint16_t outValLen);
 items_error_t items_requiringToDisplayString(item_t item, char *outVal, uint16_t outValLen);
+items_error_t items_amountToDisplayString(item_t item, char *outVal, uint16_t outValLen);
 items_error_t items_transferToDisplayString(item_t item, char *outVal, uint16_t outValLen);
 items_error_t items_crossTransferToDisplayString(item_t item, char *outVal, uint16_t outValLen);
 items_error_t items_rotateToDisplayString(item_t item, char *outVal, uint16_t outValLen);

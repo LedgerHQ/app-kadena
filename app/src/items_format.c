@@ -18,8 +18,8 @@
 
 #include <zxformat.h>
 
+#include "common/parser.h"
 #include "crypto.h"
-#include "parser.h"
 
 extern char base64_hash[45];
 
@@ -103,60 +103,37 @@ items_error_t items_requiringToDisplayString(__Z_UNUSED item_t item, char *outVa
     return items_ok;
 }
 
-items_error_t items_transferToDisplayString(item_t item, char *outVal, uint16_t outValLen) {
-    const char *amount;
-    const char *to;
-    const char *from;
-    uint8_t amount_len = 0;
-    uint8_t to_len = 0;
-    uint8_t from_len = 0;
-    uint16_t token_index = 0;
-    parsed_json_t *json_all = &(parser_getParserJsonObj()->json);
-    uint16_t item_token_index = item.json_token_index;
+items_error_t items_amountToDisplayString(item_t item, char *outVal, uint16_t outValLen) {
+    const parsed_json_t *json_all = &(parser_getParserJsonObj()->json);
+    const jsmntok_t *token = &(json_all->tokens[item.json_token_index]);
+    const uint16_t len = token->end - token->start;
 
-    PARSER_TO_ITEMS_ERROR(object_get_value(json_all, item_token_index, "args", &token_index));
-    PARSER_TO_ITEMS_ERROR(parser_arrayElementToString(token_index, 0, &from, &from_len));
-    PARSER_TO_ITEMS_ERROR(parser_arrayElementToString(token_index, 1, &to, &to_len));
-    PARSER_TO_ITEMS_ERROR(parser_arrayElementToString(token_index, 2, &amount, &amount_len));
+    if (len == 0) return items_length_zero;
 
-    uint16_t required_len = amount_len + from_len + to_len + strlen(" from ") + strlen(" to ") + 4 * sizeof("\"");
-    if (required_len > outValLen) {
+    if (len >= outValLen) {
         return items_data_too_large;
     }
 
-    snprintf(outVal, outValLen, "%.*s from \"%.*s\" to \"%.*s\"", amount_len, amount, from_len, from, to_len, to);
+    snprintf(outVal, outValLen, "KDA %.*s", len, json_all->buffer + token->start);
 
     return items_ok;
 }
 
-items_error_t items_crossTransferToDisplayString(item_t item, char *outVal, uint16_t outValLen) {
-    const char *amount;
-    const char *to;
-    const char *from;
-    const char *chain;
-    uint8_t amount_len = 0;
-    uint8_t to_len = 0;
-    uint8_t from_len = 0;
-    uint8_t chain_len = 0;
-    uint16_t token_index = 0;
-    parsed_json_t *json_all = &(parser_getParserJsonObj()->json);
-    uint16_t item_token_index = item.json_token_index;
+items_error_t items_transferToDisplayString(__Z_UNUSED item_t item, char *outVal, uint16_t outValLen) {
+    uint16_t len = sizeof("Normal Transfer");
 
-    PARSER_TO_ITEMS_ERROR(object_get_value(json_all, item_token_index, "args", &token_index));
-    PARSER_TO_ITEMS_ERROR(parser_arrayElementToString(token_index, 0, &from, &from_len));
-    PARSER_TO_ITEMS_ERROR(parser_arrayElementToString(token_index, 1, &to, &to_len));
-    PARSER_TO_ITEMS_ERROR(parser_arrayElementToString(token_index, 2, &amount, &amount_len));
-    PARSER_TO_ITEMS_ERROR(parser_arrayElementToString(token_index, 3, &chain, &chain_len));
+    if (len > outValLen) return items_data_too_large;
 
-    uint16_t required_len = amount_len + from_len + to_len + chain_len + strlen("Cross-chain ") + strlen(" from ") +
-                            strlen(" to ") + 6 * strlen("\"") + strlen(" to chain ");
-    if (required_len > outValLen) {
-        return items_data_too_large;
-    }
+    snprintf(outVal, len, "Normal Transfer");
+    return items_ok;
+}
 
-    snprintf(outVal, outValLen, "Cross-chain %.*s from \"%.*s\" to \"%.*s\" to chain \"%.*s\"", amount_len, amount, from_len,
-             from, to_len, to, chain_len, chain);
+items_error_t items_crossTransferToDisplayString(__Z_UNUSED item_t item, char *outVal, uint16_t outValLen) {
+    uint16_t len = sizeof("Cross-chain Transfer");
 
+    if (len > outValLen) return items_data_too_large;
+
+    snprintf(outVal, len, "Cross-chain Transfer");
     return items_ok;
 }
 

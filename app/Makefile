@@ -22,14 +22,8 @@ endif
 
 MY_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 
-include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.installer_script
-
-include $(BOLOS_SDK)/Makefile.defines
-
 # Set the default value for PRODUCTION_BUILD to 0 if not already defined
 PRODUCTION_BUILD ?= 1
-
-$(info ************ KADENA_NAME  = [$(TARGET_NAME)])
 
 # Display whether this is a production build or for internal use
 ifeq ($(PRODUCTION_BUILD), 1)
@@ -39,9 +33,8 @@ else
 endif
 
 # Display whether swap functionality is enabled or not
-ifdef HAVE_SWAP
+ifeq ($(ENABLE_SWAP), 1)
     $(info ************ HAVE_SWAP  = [ENABLED])
-    DEFINES += HAVE_SWAP=$(HAVE_SWAP)
 else
     $(info ************ HAVE_SWAP  = [DISABLED])
 endif
@@ -55,6 +48,9 @@ include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.app_testing
 ifndef COIN
 COIN=kadena
 endif
+
+VARIANT_PARAM=COIN
+VARIANT_VALUES=$(COIN)
 
 include $(CURDIR)/Makefile.version
 
@@ -78,13 +74,23 @@ $(info PATHS LIST = $(APPPATH))
 
 APP_LOAD_PARAMS =  --curve ed25519 --delete $(COMMON_LOAD_PARAMS) --path $(APPPATH)
 
-ifeq ($(TARGET_NAME),TARGET_NANOS)
-	APP_STACK_MIN_SIZE := 1600
-else
-	APP_STACK_MIN_SIZE := 1752
-endif
+# DEFINES += BLAKE3_NO_SSE2 BLAKE3_NO_SSE41 BLAKE3_NO_AVX2 BLAKE3_NO_AVX512 BLAKE3_USE_NEON=0
+# BLAKE3_DIR := $(CURDIR)/../deps/BLAKE3-c
+# INCLUDES_PATH += $(BLAKE3_DIR)
+# APP_SOURCE_FILES += $(BLAKE3_DIR)/blake3.c $(BLAKE3_DIR)/blake3_dispatch.c $(BLAKE3_DIR)/blake3_portable.c
+
+include $(BOLOS_SDK)/Makefile.target
 
 include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.devices
+
+include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.platform
+
+CFLAGS += -Wvla
+# LDFLAGS += -z muldefs
+# LDLIBS += -Lrust/target/thumbv6m-none-eabi/release -lrslib
+# APP_SOURCE_PATH += $(CURDIR)/rust/include
+
+include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.installer_script
 
 $(info TARGET_NAME  = [$(TARGET_NAME)])
 $(info ICONNAME  = [$(ICONNAME)])
@@ -93,16 +99,6 @@ ifndef ICONNAME
 $(error ICONNAME is not set)
 endif
 
-# DEFINES += BLAKE3_NO_SSE2 BLAKE3_NO_SSE41 BLAKE3_NO_AVX2 BLAKE3_NO_AVX512 BLAKE3_USE_NEON=0
-# BLAKE3_DIR := $(CURDIR)/../deps/BLAKE3-c
-# INCLUDES_PATH += $(BLAKE3_DIR)
-# APP_SOURCE_FILES += $(BLAKE3_DIR)/blake3.c $(BLAKE3_DIR)/blake3_dispatch.c $(BLAKE3_DIR)/blake3_portable.c
-
-include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.platform
-CFLAGS += -Wvla
-# LDFLAGS += -z muldefs
-# LDLIBS += -Lrust/target/thumbv6m-none-eabi/release -lrslib
-# APP_SOURCE_PATH += $(CURDIR)/rust/include
 
 .PHONY: rust
 rust:
@@ -130,17 +126,8 @@ clean: rust_clean
 
 # clean: rust_clean
 
-include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.side_loading
-
-# Import generic rules from the SDK
-include $(BOLOS_SDK)/Makefile.rules
-
 #add dependency on custom makefile filename
 dep/%.d: %.c Makefile
-
-.PHONY: listvariants
-listvariants:
-	@echo VARIANTS COIN kadena
 
 .PHONY: version
 version:

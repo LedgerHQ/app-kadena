@@ -25,8 +25,9 @@
     "upgrade": "bunx npm-check-updates -i"
   },
   "dependencies": {
-    "@zondax/ledger-kadena": "v0.0.3",
-    "@zondax/zemu": "^0.51.0"
+    "@zondax/ledger-kadena": "^0.0.3",
+    "@zondax/zemu": "^0.53.0",
+    "hw-app-kda": "^0.0.0"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-node-hid": "^6.29.5",
@@ -35,6 +36,7 @@
     "@types/ledgerhq__hw-transport": "^4.21.8",
     "@typescript-eslint/eslint-plugin": "^8.8.1",
     "@typescript-eslint/parser": "^8.8.1",
+    "@zondax/hw-app-kda": "^0.1.1",
     "blakejs": "^1.2.1",
     "crypto-js": "4.2.0",
     "ed25519-supercop": "^2.0.1",
@@ -46,7 +48,6 @@
     "eslint-plugin-promise": "^7.1.0",
     "eslint-plugin-tsdoc": "^0.3.0",
     "eslint-plugin-unused-imports": "^4.1.4",
-    "@zondax/hw-app-kda": "^0.1.1",
     "jest": "29.7.0",
     "jssha": "^3.3.1",
     "prettier": "^3.3.3",

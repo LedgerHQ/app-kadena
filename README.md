@@ -11,9 +11,9 @@ _Please visit our website at [zondax.ch](https://www.zondax.ch)_
 
 ---
 
-This project contains the Kadena app for Ledger Nano S, Nano S+, Nano X, Flex, and Stax.
+This project contains the Kadena app for Ledger Nano S+, Nano X, Flex, and Stax.
 
-- Ledger Nano S/S+/X, Flex, and Stax Kadena app
+- Ledger Nano S+/X, Flex, and Stax Kadena app
 - Specs / Documentation
 - C++ unit tests
 - Zemu tests

@@ -95,8 +95,7 @@ JSMN_API void jsmn_init(jsmn_parser *parser);
  * describing
  * a single JSON object.
  */
-JSMN_API int jsmn_parse(jsmn_parser *parser, const char *js, const size_t len, jsmntok_t *tokens,
-                        const unsigned int num_tokens);
+JSMN_API int jsmn_parse(jsmn_parser *parser, const char *js, size_t len, jsmntok_t *tokens, unsigned int num_tokens);
 #ifdef __cplusplus
 }
 #endif

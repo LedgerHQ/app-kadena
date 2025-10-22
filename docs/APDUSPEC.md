@@ -250,7 +250,7 @@ All other packets/chunks contain data chunks that are described below
 | amount_len          | byte (1)                    | Amount Length               |                     |
 | amount              | byte (amount_len)           | Amount                      | (0..32)             |
 | namespace_len       | byte (1)                    | Namespace Length            |                     |
-| namespace           | byte (namespace_len)        | Namespace                   | (0..16)             |
+| namespace           | byte (namespace_len)        | Namespace                   | (0..63)             |
 | module_len          | byte (1)                    | Module Length               |                     |
 | module              | byte (module_len)           | Module                      | (0..32)             |
 | gas_price_len       | byte (1)                    | Gas Price Length            |                     |
@@ -467,7 +467,7 @@ Builds a transfer transaction using the input data, and provides a signature for
 | amount_len          | byte (1)                    | Amount Length               |                     |
 | amount              | byte (amount_len)           | Amount                      | (0..32)             |
 | namespace_len       | byte (1)                    | Namespace Length            |                     |
-| namespace           | byte (namespace_len)        | Namespace                   | (0..16)             |
+| namespace           | byte (namespace_len)        | Namespace                   | (0..63)             |
 | module_len          | byte (1)                    | Module Length               |                     |
 | module              | byte (module_len)           | Module                      | (0..32)             |
 | gas_price_len       | byte (1)                    | Gas Price Length            |                     |

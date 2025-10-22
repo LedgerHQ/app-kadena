@@ -16,7 +16,7 @@
       "6 | To [2/2] : 566819ec48e0e8c54dae6ebb42",
       "7 | Amount : KDA 11",
       "8 | On Chain : 0",
-      "9 | Using Gas : at most 600 at price 1.0e-5",
+      "9 | Using Gas : at most 600 at price 1.0e-5"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -53,7 +53,7 @@
       "6 | To [2/2] : e0cfdce494243a61b8ea572dfd",
       "7 | Amount : KDA 2",
       "8 | On Chain : 0",
-      "9 | Using Gas : at most 600 at price 1.0e-6",
+      "9 | Using Gas : at most 600 at price 1.0e-6"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -333,7 +333,7 @@
       "5 | WARNING [5/6] : ary actions on the chain including los",
       "5 | WARNING [6/6] : s of all funds.",
       "6 | On Chain : 1",
-      "7 | Using Gas : at most 600 at price 0.00001",
+      "7 | Using Gas : at most 600 at price 0.00001"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -374,7 +374,7 @@
       "5 | WARNING [5/6] : ary actions on the chain including los",
       "5 | WARNING [6/6] : s of all funds.",
       "6 | On Chain : 1",
-      "7 | Using Gas : at most 600 at price 0.00001",
+      "7 | Using Gas : at most 600 at price 0.00001"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -413,7 +413,7 @@
       "6 | To [2/2] : d416fbd915990c8a136b1a970ca5",
       "7 | Amount : KDA 2",
       "8 | On Chain : 1",
-      "9 | Using Gas : at most 600 at price 0.00001",
+      "9 | Using Gas : at most 600 at price 0.00001"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -451,7 +451,7 @@
       "7 | Amount : KDA 1.0",
       "8 | To Chain : 0",
       "9 | On Chain : 1",
-      "10 | Using Gas : at most 600 at price 0.00001",
+      "10 | Using Gas : at most 600 at price 0.00001"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -490,7 +490,7 @@
       "7 | Amount : KDA {\"decimal\":\"123456789.0123456789\"}",
       "8 | To Chain : 0",
       "9 | On Chain : 1",
-      "10 | Using Gas : at most 600 at price 0.00001",
+      "10 | Using Gas : at most 600 at price 0.00001"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -529,7 +529,7 @@
       "4 | Unknown Capability 1 [6/7] : \"decimal\":\"123456789.0123456789\"}, arg",
       "4 | Unknown Capability 1 [7/7] :  4: \"0\", arg 5: true",
       "5 | On Chain : 1",
-      "6 | Using Gas : at most 600 at price 0.00001",
+      "6 | Using Gas : at most 600 at price 0.00001"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -585,7 +585,7 @@
       "18 | To [2/2] : e0cfdce494243a61b8ea572dfd",
       "19 | Amount : KDA 4",
       "20 | On Chain : 0",
-      "21 | Using Gas : at most 600 at price 1.0e-6",
+      "21 | Using Gas : at most 600 at price 1.0e-6"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -660,7 +660,7 @@
       "20 | To [2/2] : e0cfdce494243a61b8ea572dfd",
       "21 | Amount : KDA 4",
       "22 | On Chain : 0",
-      "23 | Using Gas : at most 600 at price 1.0e-6",
+      "23 | Using Gas : at most 600 at price 1.0e-6"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -717,7 +717,7 @@
       "6 | To [2/2] : 566819ec48e0e8c54dae6ebb42",
       "7 | Amount : KDA 11",
       "8 | CAUTION [1/2] : 'meta' field of transaction not recogn",
-      "8 | CAUTION [2/2] : ized",
+      "8 | CAUTION [2/2] : ized"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -749,7 +749,7 @@
       "3 | Of Key [2/2] : 5aa36f1b5ff837d9b30c471790",
       "4 | Unknown Capability 1 : name: mycoin.MY_TRANSFER, no args",
       "5 | On Chain : 0",
-      "6 | Using Gas : at most 600 at price 1.0e-5",
+      "6 | Using Gas : at most 600 at price 1.0e-5"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -778,7 +778,7 @@
       "4 | Unknown Capability 1 [2/3] : 4c0f9b005f378ba3520f9dea952fb0a90e5aa3",
       "4 | Unknown Capability 1 [3/3] : 6f1b5ff837d9b30c471790\"",
       "5 | On Chain : 0",
-      "6 | Using Gas : at most 600 at price 1.0e-5",
+      "6 | Using Gas : at most 600 at price 1.0e-5"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -810,7 +810,7 @@
       "4 | Unknown Capability 1 [3/4] : 6f1b5ff837d9b30c471790\", arg 2: \"secon",
       "4 | Unknown Capability 1 [4/4] : d arg\"",
       "5 | On Chain : 0",
-      "6 | Using Gas : at most 600 at price 1.0e-5",
+      "6 | Using Gas : at most 600 at price 1.0e-5"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -843,7 +843,7 @@
       "4 | Unknown Capability 1 [3/4] : 6f1b5ff837d9b30c471790\", arg 2: \"secon",
       "4 | Unknown Capability 1 [4/4] : d arg\", arg 3: 22.2",
       "5 | On Chain : 0",
-      "6 | Using Gas : at most 600 at price 1.0e-5",
+      "6 | Using Gas : at most 600 at price 1.0e-5"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -878,7 +878,7 @@
       "4 | Unknown Capability 1 [5/6] :  arg 2: {}, arg 3: [], arg 4: false, a",
       "4 | Unknown Capability 1 [6/6] : rg 5: null",
       "5 | On Chain : 0",
-      "6 | Using Gas : at most 600 at price 1.0e-5",
+      "6 | Using Gas : at most 600 at price 1.0e-5"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -925,7 +925,7 @@
       "8 | Unknown Capability 5 [3/4] : 36f1b5ff837d9b30c471790\", arg 2: \"seco",
       "8 | Unknown Capability 5 [4/4] : nd arg\", arg 3: 5000, arg 4: 22.2",
       "9 | On Chain : 0",
-      "10 | Using Gas : at most 600 at price 1.0e-5",
+      "10 | Using Gas : at most 600 at price 1.0e-5"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -989,7 +989,7 @@
       "15 | Unknown Capability 3 [5/6] : 6f1b5ff837d9b30c471792\", arg 3: 5000, ",
       "15 | Unknown Capability 3 [6/6] : arg 4: \"0\"",
       "16 | On Chain : 0",
-      "17 | Using Gas : at most 600 at price 1.0e-5",
+      "17 | Using Gas : at most 600 at price 1.0e-5"
     ],
     "output_expert": [
       "0 | Signing : Transaction",
@@ -1042,7 +1042,7 @@
       "6 | Using Gas : at most 600 at price 1.0e-5",
       "7 | WARNING [1/3] : Transaction too large for Ledger to di",
       "7 | WARNING [2/3] : splay.  PROCEED WITH GREAT CAUTION.  D",
-      "7 | WARNING [3/3] : o you want to continue?",
+      "7 | WARNING [3/3] : o you want to continue?"
     ],
     "output_expert": [
       "0 | Signing : Transaction",

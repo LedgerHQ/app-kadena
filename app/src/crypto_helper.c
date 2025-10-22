@@ -16,7 +16,7 @@
 
 #include "crypto_helper.h"
 
-#if defined(TARGET_NANOS) || defined(TARGET_NANOX) || defined(TARGET_NANOS2) || defined(TARGET_STAX) || defined(TARGET_FLEX)
+#if defined(LEDGER_SPECIFIC)
 #include "cx.h"
 
 zxerr_t blake2b_hash(const unsigned char *in, unsigned int inLen, unsigned char *out) {

@@ -18,19 +18,6 @@
 #include "../common/parser_common.h"
 #include "jsmn/jsmn.h"
 
-/**
- * Create JSON parser over an array of tokens
- */
-extern void jsmn_init(jsmn_parser *parser);
-
-/**
- * Run JSON parser. It parses a JSON data string into and array of tokens, each
- * describing
- * a single JSON object.
- */
-extern int jsmn_parse(jsmn_parser *parser, const char *js, const size_t len, jsmntok_t *tokens,
-                      const unsigned int num_tokens);
-
 parser_error_t array_get_element_count(const parsed_json_t *json, uint16_t array_token_index, uint16_t *number_elements) {
     *number_elements = 0;
     if (array_token_index > json->numberOfTokens) {

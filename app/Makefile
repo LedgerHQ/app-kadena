@@ -38,11 +38,11 @@ APP_SOURCE_PATH += src
 
 # Application icons following guidelines:
 # https://developers.ledger.com/docs/embedded-app/design-requirements/#device-icon
-ICON_NANOS = nanos_icon.gif
 ICON_NANOX = nanox_icon.gif
 ICON_NANOSP = nanox_icon.gif
 ICON_STAX = stax_icon.gif
 ICON_FLEX = flex_icon.gif
+ICON_APEX_P = apex_p_icon.png
 
 # Application allowed derivation curves.
 # Possibles curves are: secp256k1, secp256r1, ed25519 and bls12381g1
@@ -76,13 +76,6 @@ VARIANT_PARAM=COIN
 VARIANT_VALUES=$(COIN)
 
 INCLUDES_PATH += $(CURDIR)/src/common
-
-# Flag to compile all Penumbra actions
-FULL_APP ?= 0
-ifeq ($(FULL_APP),1)
-DEFINES += FULL_APP
-$(info ************ FULL APP ENABLED ************)
-endif
 
 ########################################
 # Application communication interfaces #

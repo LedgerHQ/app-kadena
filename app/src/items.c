@@ -363,7 +363,7 @@ static items_error_t items_storeHash() {
 }
 
 static items_error_t items_storeSignForAddr() {
-#if defined(TARGET_NANOS) || defined(TARGET_NANOX) || defined(TARGET_NANOS2) || defined(TARGET_STAX) || defined(TARGET_FLEX)
+#if defined(LEDGER_SPECIFIC)
     item_t *item = &item_array.items[item_array.numOfItems];
 
     item->key = key_sign_for_address;

@@ -73,7 +73,7 @@ async function main() {
     signatureResponse = await signatureRequest
     console.log(messageToSign.toString())
     console.log(signatureResponse.signature.toString('hex'))
-      
+
     await verifySignature(signatureResponse.signature, messageToSign, publicKey, false)
   } catch (e) {
     console.log(e)

@@ -44,7 +44,7 @@ typedef struct {
     uint8_t templete_json[TEMPLATE_JSON_BUFFER_SIZE];
 } storage_t;
 
-#if defined(TARGET_NANOS) || defined(TARGET_NANOX) || defined(TARGET_NANOS2) || defined(TARGET_STAX) || defined(TARGET_FLEX)
+#if defined(LEDGER_SPECIFIC)
 storage_t NV_CONST N_appdata_impl __attribute__((aligned(64)));
 #define N_appdata (*(NV_VOLATILE storage_t *)PIC(&N_appdata_impl))
 #else
@@ -130,10 +130,13 @@ zxerr_t tx_getItem(int8_t displayIdx, char *outKey, uint16_t outKeyLen, char *ou
         parser_getItem(&ctx_parsed_tx, displayIdx, outKey, outKeyLen, outVal, outValLen, pageIdx, pageCount);
 
     // Convert error codes
-    if (err == parser_no_data || err == parser_display_idx_out_of_range || err == parser_display_page_out_of_range)
+    if (err == parser_no_data || err == parser_display_idx_out_of_range || err == parser_display_page_out_of_range) {
         return zxerr_no_data;
+    }
 
-    if (err != parser_ok) return zxerr_unknown;
+    if (err != parser_ok) {
+        return zxerr_unknown;
+    }
 
     return zxerr_ok;
 }

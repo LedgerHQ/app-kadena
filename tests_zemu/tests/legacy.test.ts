@@ -14,7 +14,7 @@
  *  limitations under the License.
  ******************************************************************************* */
 
-import Zemu, {ButtonKind, isTouchDevice, TouchNavigation} from '@zondax/zemu'
+import Zemu, { ButtonKind, isTouchDevice, TouchNavigation, ClickNavigation } from '@zondax/zemu'
 import Kda from '@zondax/hw-app-kda'
 import { PATH, defaultOptions, models } from './common'
 import { blake2bFinal, blake2bInit, blake2bUpdate } from 'blakejs'
@@ -23,6 +23,8 @@ import { JSON_TEST_CASES } from './testscases/json'
 import { HASH_TEST_CASES } from './testscases/hash'
 import { TRANSACTIONS_TEST_CASES, HANDLER_LEGACY_TEST_CASES } from './testscases/transactions'
 import { APDU_TEST_CASES } from './testscases/legacy_apdu'
+import { IButton } from '@zondax/zemu/dist/types'
+import { getTouchElement } from '@zondax/zemu/dist/buttons'
 
 // @ts-expect-error
 import ed25519 from 'ed25519-supercop'
@@ -116,7 +118,6 @@ test.concurrent.each(models)('legacy show address - reject', async function (m) 
     // Wait until we are not in the main menu
     await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot())
     await sim.compareSnapshotsAndReject('.', `${m.prefix.toLowerCase()}-show_address_reject_legacy`)
-
   } finally {
     await sim.close()
   }
@@ -148,7 +149,7 @@ describe.each(JSON_TEST_CASES)('Tx json', function (data) {
         const context = blake2bInit(32)
         blake2bUpdate(context, txBlob)
         const hash = Buffer.from(blake2bFinal(context))
-  
+
         // Now verify the signature
         const valid = ed25519.verify(signatureResponse.signature, hash, publicKey)
         expect(valid).toEqual(true)
@@ -208,31 +209,20 @@ describe.each(HASH_TEST_CASES)('Hash transactions BLS off', function (data) {
 
       const { publicKey } = await app.getPublicKey(data.path)
 
-      const req = app.signHash(data.path, data.hash).catch(error => {
-        // Store the error to verify later, we are expecting signHash to fail
-        return error;
-      });
+      const signNonExpert = app.signHash(data.path, data.hash)
+
+      await Zemu.sleep(500)
 
       // Wait until we are not in the main menu
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot())
+      let nav = undefined
+      const confirmButton: IButton = getTouchElement(m.name, ButtonKind.ConfirmYesButton)
+      nav = new TouchNavigation(m.name, [ButtonKind.ConfirmYesButton])
+      nav.schedule[0].button = confirmButton
 
-      // Confirm "Go to settings" and toggle Blind Signing
-      const nav = new TouchNavigation(m.name, [
-        ButtonKind.ConfirmYesButton,
-        ButtonKind.ToggleSettingButton2,
-        ButtonKind.SettingsNavRightButton,
-        ButtonKind.SettingsNavRightButton,
-        ButtonKind.SettingsQuitButton,
-      ]);
-      await sim.navigateAndCompareSnapshots('.', `${m.prefix.toLowerCase()}-clear_sign_${data.name}_legacy`, nav.schedule)
+      await sim.navigate('.', `${m.prefix.toLowerCase()}-clear_sign_${data.name}_legacy`, nav.schedule)
 
-      const result = await req;
-      
-      // Verify the error, anything other than 0x6984 is not expected
-      expect(result).toMatchObject({
-        statusCode: 0x6984,
-        statusText: 'UNKNOWN_ERROR'
-      });
+      await expect(signNonExpert).rejects.toThrow('Ledger device: UNKNOWN_ERROR (0x6984)')
     } finally {
       await sim.close()
     }
@@ -272,7 +262,7 @@ describe.each(TRANSACTIONS_TEST_CASES)('Tx transfer', function (data) {
         console.log('Pubkey: ', Buffer.from(publicKey).toString('hex'))
         console.log('Signature: ', Buffer.from(signatureHex).toString('hex'))
         console.log('Decoded Hash: ', Buffer.from(decodedHash).toString('hex'))
-  
+
         // Now verify the signature
         const valid = ed25519.verify(signatureHex, decodedHash, publicKey)
         expect(valid).toEqual(true)
@@ -318,7 +308,7 @@ describe.each(HANDLER_LEGACY_TEST_CASES)('Tx transfer', function (data) {
         console.log('Pubkey: ', Buffer.from(publicKey).toString('hex'))
         console.log('Signature: ', Buffer.from(signatureHex).toString('hex'))
         console.log('Decoded Hash: ', Buffer.from(decodedHash).toString('hex'))
-  
+
         // Now verify the signature
         const valid = ed25519.verify(signatureHex, decodedHash, publicKey)
         expect(valid).toEqual(true)
@@ -344,7 +334,7 @@ describe.each(APDU_TEST_CASES)('APDU tests ', function (data) {
 
       // do not wait here... we need to navigate
       var signatureRequest = app.signTransaction(data.path, txBlob)
-      
+
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot())
       await sim.compareSnapshotsAndApprove('.', `${m.prefix.toLowerCase()}-${data.name}`)
 
@@ -355,14 +345,13 @@ describe.each(APDU_TEST_CASES)('APDU tests ', function (data) {
         const context = blake2bInit(32)
         blake2bUpdate(context, txBlob)
         const hash = Buffer.from(blake2bFinal(context))
-  
+
         // Now verify the signature
         const valid = ed25519.verify(signatureResponse.signature, hash, publicKey)
         expect(valid).toEqual(true)
       } else {
         throw new Error('signatureResponse is null')
       }
-
     } finally {
       await sim.close()
     }

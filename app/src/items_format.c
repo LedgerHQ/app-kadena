@@ -28,7 +28,9 @@ items_error_t items_stdToDisplayString(item_t item, char *outVal, uint16_t outVa
     const jsmntok_t *token = &(json_all->tokens[item.json_token_index]);
     const uint16_t len = token->end - token->start;
 
-    if (len == 0) return items_length_zero;
+    if (len == 0) {
+        return items_length_zero;
+    }
 
     if (len >= outValLen) {
         return items_data_too_large;
@@ -43,7 +45,9 @@ items_error_t items_nothingToDisplayString(__Z_UNUSED item_t item, char *outVal,
     char nothing[] = " ";
     uint16_t len = 2;
 
-    if (len > outValLen) return items_data_too_large;
+    if (len > outValLen) {
+        return items_data_too_large;
+    }
 
     snprintf(outVal, len, "%s", nothing);
     return items_ok;
@@ -52,7 +56,9 @@ items_error_t items_nothingToDisplayString(__Z_UNUSED item_t item, char *outVal,
 items_error_t items_warningToDisplayString(__Z_UNUSED item_t item, char *outVal, uint16_t outValLen) {
     uint16_t len = sizeof(WARNING_TEXT);
 
-    if (len > outValLen) return items_data_too_large;
+    if (len > outValLen) {
+        return items_data_too_large;
+    }
 
     snprintf(outVal, len, WARNING_TEXT);
     return items_ok;
@@ -61,7 +67,9 @@ items_error_t items_warningToDisplayString(__Z_UNUSED item_t item, char *outVal,
 items_error_t items_hashWarningToDisplayString(__Z_UNUSED item_t item, char *outVal, uint16_t outValLen) {
     uint16_t len = sizeof(HASH_WARNING_TEXT);
 
-    if (len > outValLen) return items_data_too_large;
+    if (len > outValLen) {
+        return items_data_too_large;
+    }
 
     snprintf(outVal, len, HASH_WARNING_TEXT);
     return items_ok;
@@ -70,7 +78,9 @@ items_error_t items_hashWarningToDisplayString(__Z_UNUSED item_t item, char *out
 items_error_t items_cautionToDisplayString(__Z_UNUSED item_t item, char *outVal, uint16_t outValLen) {
     uint16_t len = sizeof(CAUTION_TEXT);
 
-    if (len > outValLen) return items_data_too_large;
+    if (len > outValLen) {
+        return items_data_too_large;
+    }
 
     snprintf(outVal, len, CAUTION_TEXT);
     return items_ok;
@@ -79,7 +89,9 @@ items_error_t items_cautionToDisplayString(__Z_UNUSED item_t item, char *outVal,
 items_error_t items_txTooLargeToDisplayString(__Z_UNUSED item_t item, char *outVal, uint16_t outValLen) {
     uint16_t len = sizeof(TX_TOO_LARGE_TEXT);
 
-    if (len > outValLen) return items_data_too_large;
+    if (len > outValLen) {
+        return items_data_too_large;
+    }
 
     snprintf(outVal, len, TX_TOO_LARGE_TEXT);
     return items_ok;
@@ -88,7 +100,9 @@ items_error_t items_txTooLargeToDisplayString(__Z_UNUSED item_t item, char *outV
 items_error_t items_signingToDisplayString(__Z_UNUSED item_t item, char *outVal, uint16_t outValLen) {
     uint16_t len = sizeof("Transaction");
 
-    if (len > outValLen) return items_data_too_large;
+    if (len > outValLen) {
+        return items_data_too_large;
+    }
 
     snprintf(outVal, len, "Transaction");
     return items_ok;
@@ -97,7 +111,9 @@ items_error_t items_signingToDisplayString(__Z_UNUSED item_t item, char *outVal,
 items_error_t items_requiringToDisplayString(__Z_UNUSED item_t item, char *outVal, uint16_t outValLen) {
     uint16_t len = sizeof("Capabilities");
 
-    if (len > outValLen) return items_data_too_large;
+    if (len > outValLen) {
+        return items_data_too_large;
+    }
 
     snprintf(outVal, len, "Capabilities");
     return items_ok;
@@ -108,7 +124,9 @@ items_error_t items_amountToDisplayString(item_t item, char *outVal, uint16_t ou
     const jsmntok_t *token = &(json_all->tokens[item.json_token_index]);
     const uint16_t len = token->end - token->start;
 
-    if (len == 0) return items_length_zero;
+    if (len == 0) {
+        return items_length_zero;
+    }
 
     if (len >= outValLen) {
         return items_data_too_large;
@@ -122,7 +140,9 @@ items_error_t items_amountToDisplayString(item_t item, char *outVal, uint16_t ou
 items_error_t items_transferToDisplayString(__Z_UNUSED item_t item, char *outVal, uint16_t outValLen) {
     uint16_t len = sizeof("Normal Transfer");
 
-    if (len > outValLen) return items_data_too_large;
+    if (len > outValLen) {
+        return items_data_too_large;
+    }
 
     snprintf(outVal, len, "Normal Transfer");
     return items_ok;
@@ -131,7 +151,9 @@ items_error_t items_transferToDisplayString(__Z_UNUSED item_t item, char *outVal
 items_error_t items_crossTransferToDisplayString(__Z_UNUSED item_t item, char *outVal, uint16_t outValLen) {
     uint16_t len = sizeof("Cross-chain Transfer");
 
-    if (len > outValLen) return items_data_too_large;
+    if (len > outValLen) {
+        return items_data_too_large;
+    }
 
     snprintf(outVal, len, "Cross-chain Transfer");
     return items_ok;
@@ -141,7 +163,7 @@ items_error_t items_rotateToDisplayString(item_t item, char *outVal, uint16_t ou
     uint16_t token_index = 0;
     uint16_t item_token_index = item.json_token_index;
     parsed_json_t *json_all = &(parser_getParserJsonObj()->json);
-    jsmntok_t *token;
+    jsmntok_t *token = NULL;
 
     PARSER_TO_ITEMS_ERROR(object_get_value(json_all, item_token_index, "args", &token_index));
     PARSER_TO_ITEMS_ERROR(array_get_nth_element(json_all, token_index, 0, &token_index));
@@ -154,14 +176,14 @@ items_error_t items_rotateToDisplayString(item_t item, char *outVal, uint16_t ou
 }
 
 items_error_t items_gasToDisplayString(__Z_UNUSED item_t item, char *outVal, uint16_t outValLen) {
-    const char *gasLimit;
-    const char *gasPrice;
-    uint8_t gasLimit_len;
-    uint8_t gasPrice_len;
+    const char *gasLimit = NULL;
+    const char *gasPrice = NULL;
+    uint8_t gasLimit_len = 0;
+    uint8_t gasPrice_len = 0;
     parsed_json_t *json_all = &(parser_getParserJsonObj()->json);
     uint16_t item_token_index = item.json_token_index;
     uint16_t meta_token_index = item.json_token_index;
-    jsmntok_t *token;
+    jsmntok_t *token = NULL;
 
     PARSER_TO_ITEMS_ERROR(object_get_value(json_all, item_token_index, JSON_GAS_LIMIT, &item_token_index));
     token = &(json_all->tokens[item_token_index]);
@@ -188,7 +210,9 @@ items_error_t items_gasToDisplayString(__Z_UNUSED item_t item, char *outVal, uin
 items_error_t items_hashToDisplayString(__Z_UNUSED item_t item, char *outVal, uint16_t outValLen) {
     // TODO: why -2 here?
     uint16_t len = sizeof(base64_hash) - 2;
-    if (len >= outValLen) return items_data_too_large;
+    if (len >= outValLen) {
+        return items_data_too_large;
+    }
 
     snprintf(outVal, outValLen, "%.*s", len, base64_hash);
     return items_ok;
@@ -200,7 +224,7 @@ items_error_t items_unknownCapabilityToDisplayString(item_t item, char *outVal, 
     uint8_t outVal_idx = 0;
     parsed_json_t *json_all = &(parser_getParserJsonObj()->json);
     uint16_t item_token_index = item.json_token_index;
-    jsmntok_t *token;
+    jsmntok_t *token = NULL;
     uint16_t len = 0;
 
     PARSER_TO_ITEMS_ERROR(object_get_value(json_all, item_token_index, JSON_NAME, &token_index));
@@ -208,7 +232,9 @@ items_error_t items_unknownCapabilityToDisplayString(item_t item, char *outVal, 
 
     len = token->end - token->start;
 
-    if (len == 0) return items_length_zero;
+    if (len == 0) {
+        return items_length_zero;
+    }
 
     if (len >= outValLen) {
         return items_data_too_large;
@@ -272,10 +298,10 @@ items_error_t items_unknownCapabilityToDisplayString(item_t item, char *outVal, 
     return items_ok;
 }
 
-#if defined(TARGET_NANOS) || defined(TARGET_NANOX) || defined(TARGET_NANOS2) || defined(TARGET_STAX) || defined(TARGET_FLEX)
+#if defined(LEDGER_SPECIFIC)
 items_error_t items_signForAddrToDisplayString(__Z_UNUSED item_t item, char *outVal, uint16_t outValLen) {
     uint8_t address[65];
-    uint16_t address_len;
+    uint16_t address_len = 0;
 
     if (crypto_fillAddress(address, sizeof(address), &address_len) != zxerr_ok) {
         return items_error;

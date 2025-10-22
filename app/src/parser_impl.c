@@ -44,7 +44,7 @@
 #define RECIPIENT_CHAIN_LEN 2
 #define NETWORK_LEN 20
 #define AMOUNT_LEN 32
-#define NAMESPACE_LEN 16
+#define NAMESPACE_LEN 63
 #define MODULE_LEN 32
 #define GAS_PRICE_LEN 20
 #define GAS_LIMIT_LEN 10
@@ -101,8 +101,8 @@ parser_error_t parser_findPubKeyInClist(uint16_t key_token_index) {
     uint16_t args_token_index = 0;
     uint16_t number_of_args = 0;
     uint16_t clist_element_count = 0;
-    jsmntok_t *value_token;
-    jsmntok_t *key_token;
+    jsmntok_t *value_token = NULL;
+    jsmntok_t *key_token = NULL;
 
     if (parser_getValidClist(&clist_token_index, &clist_element_count) != parser_ok) {
         return parser_no_data;
@@ -138,7 +138,7 @@ parser_error_t parser_arrayElementToString(uint16_t json_token_index, uint16_t e
                                            uint8_t *outValLen) {
     uint16_t token_index = 0;
     parsed_json_t *json_all = &(parser_json_obj->json);
-    jsmntok_t *token;
+    jsmntok_t *token = NULL;
     uint16_t element_count = 0;
 
     CHECK_ERROR(array_get_element_count(json_all, json_token_index, &element_count));
@@ -162,7 +162,7 @@ parser_error_t parser_validateMetaField() {
     uint16_t meta_num_elements = 0;
     uint16_t key_token_idx = 0;
     parsed_json_t *json_all = &(parser_json_obj->json);
-    jsmntok_t *token;
+    jsmntok_t *token = NULL;
 
     CHECK_ERROR(object_get_value(json_all, 0, JSON_META, &meta_token_index));
 
@@ -177,7 +177,9 @@ parser_error_t parser_validateMetaField() {
         token = &(json_all->tokens[key_token_idx]);
 
         // Prevent buffer overflow in case of big key-value pair in meta field.
-        if (token->end - token->start >= sizeof(meta_curr_key)) return parser_invalid_meta_field;
+        if (token->end - token->start >= sizeof(meta_curr_key)) {
+            return parser_invalid_meta_field;
+        }
 
         MEMCPY(meta_curr_key, json_all->buffer + token->start, token->end - token->start);
         meta_curr_key[token->end - token->start] = '\0';
@@ -197,21 +199,26 @@ parser_error_t parser_getTxName(uint16_t token_index) {
 
     if (object_get_value(json_all, token_index, JSON_NAME, &token_index) == parser_ok) {
         uint16_t len = 0;
-        jsmntok_t *token;
+        jsmntok_t *token = NULL;
 
         token = &(json_all->tokens[token_index]);
 
         len = token->end - token->start;
 
-        if (len == 0) return parser_no_data;
+        if (len == 0) {
+            return parser_no_data;
+        }
 
         if (CMP_STRING_AND_BUFFER("coin.TRANSFER", json_all->buffer + token->start, len)) {
             return parser_name_tx_transfer;
-        } else if (CMP_STRING_AND_BUFFER("coin.TRANSFER_XCHAIN", json_all->buffer + token->start, len)) {
+        }
+        if (CMP_STRING_AND_BUFFER("coin.TRANSFER_XCHAIN", json_all->buffer + token->start, len)) {
             return parser_name_tx_transfer_xchain;
-        } else if (CMP_STRING_AND_BUFFER("coin.ROTATE", json_all->buffer + token->start, len)) {
+        }
+        if (CMP_STRING_AND_BUFFER("coin.ROTATE", json_all->buffer + token->start, len)) {
             return parser_name_rotate;
-        } else if (CMP_STRING_AND_BUFFER("coin.GAS", json_all->buffer + token->start, len)) {
+        }
+        if (CMP_STRING_AND_BUFFER("coin.GAS", json_all->buffer + token->start, len)) {
             return parser_name_gas;
         }
     }
@@ -242,7 +249,9 @@ bool items_isNullField(uint16_t json_token_index) {
     parsed_json_t *json_all = &(parser_getParserJsonObj()->json);
     jsmntok_t *token = &(json_all->tokens[json_token_index]);
 
-    if (token->end - token->start != sizeof("null") - 1) return false;
+    if (token->end - token->start != sizeof("null") - 1) {
+        return false;
+    }
 
     return CMP_STRING_AND_BUFFER("null", json_all->buffer + token->start, token->end - token->start);
 }
@@ -270,7 +279,7 @@ parser_error_t parser_createJsonTemplate(parser_context_t *ctx) {
 
     CHECK_ERROR(parser_validate_chunks(chunks));
 
-#if defined(TARGET_NANOS) || defined(TARGET_NANOX) || defined(TARGET_NANOS2) || defined(TARGET_STAX) || defined(TARGET_FLEX)
+#if defined(LEDGER_SPECIFIC)
     uint8_t pubkey[PUB_KEY_LENGTH] = {0};
     uint16_t pubkey_len = 0;
 
@@ -315,7 +324,7 @@ static parser_error_t parser_formatTxTransfer(uint16_t address_len, char *addres
         return parser_unexpected_value;
     }
 
-    char namespace_and_module[50] = {0};
+    char namespace_and_module[NAMESPACE_LEN + MODULE_LEN + 1] = {0};
     if (chunks[NAMESPACE_POS].len > 0 && chunks[MODULE_POS].len > 0) {
         snprintf(namespace_and_module, sizeof(namespace_and_module), "%.*s.%.*s", chunks[NAMESPACE_POS].len,
                  chunks[NAMESPACE_POS].data, chunks[MODULE_POS].len, chunks[MODULE_POS].data);

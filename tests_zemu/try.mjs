@@ -81,13 +81,11 @@ async function main() {
           ? Buffer.from(messageToSign, 'hex')
           : Buffer.from(messageToSign, 'base64')
         : Buffer.from(messageToSign)
-  
+
     await verifySignature(signatureResponse.signature, rawHash, pubKey, false)
-  
   } catch (e) {
     console.log(e)
   }
-
 
   console.log('Signing a transfer')
   const txParams = {

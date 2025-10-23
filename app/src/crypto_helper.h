@@ -27,7 +27,7 @@ extern "C" {
 #include "coin.h"
 #include "zxerror.h"
 
-#if defined(TARGET_NANOS) || defined(TARGET_NANOX) || defined(TARGET_NANOS2) || defined(TARGET_STAX) || defined(TARGET_FLEX)
+#if defined(LEDGER_SPECIFIC)
 // blake2 needs to define output size in bits 512 bits = 64 bytes
 #define BLAKE2B_OUTPUT_LEN 256
 #else

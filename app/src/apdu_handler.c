@@ -45,6 +45,9 @@
 
 static bool tx_initialized = false;
 
+// Global variable to store error message offset for custom error display
+uint16_t G_error_message_offset = 0;
+
 void extractHDPath(uint32_t rx, uint32_t offset) {
     tx_initialized = false;
 
@@ -52,7 +55,7 @@ void extractHDPath(uint32_t rx, uint32_t offset) {
         THROW(APDU_CODE_WRONG_LENGTH);
     }
 
-    memcpy(hdPath, G_io_apdu_buffer + offset, sizeof(uint32_t) * HDPATH_LEN_DEFAULT);
+    MEMCPY(hdPath, G_io_apdu_buffer + offset, sizeof(uint32_t) * HDPATH_LEN_DEFAULT);
 
     const bool mainnet = hdPath[0] == HDPATH_0_DEFAULT && hdPath[1] == HDPATH_1_DEFAULT;
 
@@ -67,7 +70,7 @@ __Z_INLINE bool process_chunk(__Z_UNUSED volatile uint32_t *tx, uint32_t rx) {
         THROW(APDU_CODE_WRONG_LENGTH);
     }
 
-    uint32_t added;
+    uint32_t added = 0;
     switch (payloadType) {
         case P1_INIT:
             tx_initialize();
@@ -97,9 +100,12 @@ __Z_INLINE bool process_chunk(__Z_UNUSED volatile uint32_t *tx, uint32_t rx) {
             }
             tx_initialized = false;
             return true;
+        default:
+            break;
     }
 
     THROW(APDU_CODE_INVALIDP1P2);
+    return false;
 }
 
 __Z_INLINE void handleGetAddr(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
@@ -130,14 +136,21 @@ __Z_INLINE void handleSign(volatile uint32_t *flags, volatile uint32_t *tx, uint
     // Reset BLS UI for next transaction
     app_mode_skip_blindsign_ui();
 
-    uint8_t error_code;
+    uint8_t error_code = 0;
     const char *error_msg = tx_parse(tx_get_buffer_length(), get_tx_type(), &error_code);
     CHECK_APP_CANARY()
     if (error_msg != NULL) {
         const int error_msg_length = strnlen(error_msg, sizeof(G_io_apdu_buffer));
-        memcpy(G_io_apdu_buffer, error_msg, error_msg_length);
+        // Ensure we have space for error message + 2 bytes for error code
+        if (error_msg_length > (int)(sizeof(G_io_apdu_buffer) - 2)) {
+            *tx = 0;
+            THROW(APDU_CODE_OUTPUT_BUFFER_TOO_SMALL);
+        }
+        MEMZERO(G_io_apdu_buffer, IO_APDU_BUFFER_SIZE);
+        MEMCPY(G_io_apdu_buffer, error_msg, error_msg_length);
         *tx += (error_msg_length);
         if (error_code == parser_blindsign_mode_required) {
+            G_error_message_offset = error_msg_length;
             *flags |= IO_ASYNCH_REPLY;
             view_blindsign_error_show();
         }
@@ -182,6 +195,9 @@ void handleTest(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) { 
 
 void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
     volatile uint16_t sw = 0;
+
+    // Reset error message offset at the beginning of each command
+    G_error_message_offset = 0;
 
     BEGIN_TRY {
         TRY {

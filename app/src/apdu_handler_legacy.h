@@ -34,7 +34,7 @@ extern "C" {
 #define LEGACY_SHOW_ADDRESS 1
 
 void legacy_handleGetVersion(volatile uint32_t *tx);
-void legacy_handleGetAddr(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx, const uint8_t requireConfirmation);
+void legacy_handleGetAddr(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx, uint8_t requireConfirmation);
 void legacy_handleSignTransaction(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx);
 void legacy_handleSignHash(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx);
 void legacy_handleSignTransferTx(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx);

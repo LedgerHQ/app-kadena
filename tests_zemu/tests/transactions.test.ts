@@ -14,7 +14,7 @@
  *  limitations under the License.
  ******************************************************************************* */
 
-import Zemu, {ButtonKind, isTouchDevice, TouchNavigation, zondaxMainmenuNavigation} from '@zondax/zemu'
+import Zemu, { ButtonKind, isTouchDevice, TouchNavigation, ClickNavigation } from '@zondax/zemu'
 import { KadenaApp, TransferTxType, TransferCrossChainTxParams } from '@zondax/ledger-kadena'
 import { PATH, defaultOptions, models } from './common'
 import { blake2bFinal, blake2bInit, blake2bUpdate } from 'blakejs'
@@ -22,6 +22,8 @@ import { blake2bFinal, blake2bInit, blake2bUpdate } from 'blakejs'
 import { JSON_TEST_CASES } from './testscases/json'
 import { HASH_TEST_CASES } from './testscases/hash'
 import { TRANSACTIONS_TEST_CASES } from './testscases/transactions'
+import { IButton } from '@zondax/zemu/dist/types'
+import { getTouchElement } from '@zondax/zemu/dist/buttons'
 
 // @ts-expect-error
 import ed25519 from 'ed25519-supercop'
@@ -79,7 +81,7 @@ describe.each(HASH_TEST_CASES)('Hash transactions', function (data) {
 
       // // Wait until we are not in the main menu
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot())
-      await sim.compareSnapshotsAndApprove('.', `${m.prefix.toLowerCase()}-sign_${data.name}`,true, 0, 15000, true)
+      await sim.compareSnapshotsAndApprove('.', `${m.prefix.toLowerCase()}-sign_${data.name}`, true, 0, 15000, true)
 
       const signatureResponse = await signatureRequest
 
@@ -113,32 +115,21 @@ describe.each(HASH_TEST_CASES)('Hash transactions BLS off', function (data) {
       const responseAddr = await app.getAddressAndPubKey(data.path)
       const pubKey = responseAddr.pubkey
 
-      const req = app.signHash(data.path, data.hash).catch(error => {
-        // Store the error to verify later, we are expecting signHash to fail
-        return error;
-      });
+      const signNonExpert = app.signHash(data.path, data.hash)
+
+      await Zemu.sleep(500)
 
       // Wait until we are not in the main menu
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot())
 
-      // Confirm "Go to settings" and toggle Blind Signing
-      const nav = new TouchNavigation(m.name, [
-        ButtonKind.ConfirmYesButton,
-        ButtonKind.ToggleSettingButton2,
-        ButtonKind.SettingsNavRightButton,
-        ButtonKind.SettingsNavRightButton,
-        ButtonKind.SettingsQuitButton,
-      ]);
-      await sim.navigateAndCompareSnapshots('.', `${m.prefix.toLowerCase()}-clear_sign_${data.name}`, nav.schedule)
+      let nav = undefined
+      const confirmButton: IButton = getTouchElement(m.name, ButtonKind.ConfirmYesButton)
+      nav = new TouchNavigation(m.name, [ButtonKind.ConfirmYesButton])
+      nav.schedule[0].button = confirmButton
 
-      const result = await req;
-      
-      // Verify the error, anything other than 0x6984 is not expected
-      expect(result).toMatchObject({
-        returnCode: 0x6984,
-        message: expect.stringContaining("Data is invalid")
-      });
+      await sim.navigate('.', `${m.prefix.toLowerCase()}-clear_sign_${data.name}`, nav.schedule)
 
+      await expect(signNonExpert).rejects.toThrow('Data is invalid : Blind signing mode required')
     } finally {
       await sim.close()
     }
